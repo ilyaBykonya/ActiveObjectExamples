@@ -1,0 +1,8 @@
+*.pro.user*
+bin
+build
+lib
+Makefile
+*.a
+.qmake.stash
+*.autosave
