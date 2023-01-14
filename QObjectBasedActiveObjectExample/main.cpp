@@ -7,9 +7,14 @@
 
 int main(int argc, char *argv[]) {
     QCoreApplication app(argc, argv);
-    auto printer = new EventBasedAsyncQDebugPrinter{ qApp };
-    auto networkAccessManager = new QNetworkAccessManager{ qApp };
 
+    auto printerThread = new QThread{ qApp };
+    auto printer = new SignalBasedAsyncQDebugPrinter{};
+    printer->moveToThread(printerThread);
+    printerThread->start();
+
+
+    auto networkAccessManager = new QNetworkAccessManager{ qApp };
     auto reply = std::shared_ptr<QNetworkReply>{ networkAccessManager->get(QNetworkRequest{ QUrl{ "https://doc.qt.io/qt-6/qfuture.html" } }) };
     auto loadFuture = QtFuture::connect(reply.get(), &QNetworkReply::finished).
     then([reply, printer] {
