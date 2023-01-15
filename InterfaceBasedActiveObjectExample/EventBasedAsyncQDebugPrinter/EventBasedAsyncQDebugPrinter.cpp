@@ -1,18 +1,18 @@
-#include "EventBasedQDebugPrinter.h"
+#include "EventBasedAsyncQDebugPrinter.h"
 #include <QCoreApplication>
 
-EventBasedQDebugPrinter::PrinterTaskEvent::PrinterTaskEvent(const QString &message)
+EventBasedAsyncQDebugPrinter::PrinterTaskEvent::PrinterTaskEvent(const QString &message)
     :QEvent{ Type }, PrinterTask{ message } {}
 
-EventBasedQDebugPrinter::EventBasedQDebugPrinter(QObject *parent)
+EventBasedAsyncQDebugPrinter::EventBasedAsyncQDebugPrinter(QObject *parent)
     :QObject{ parent } {}
-QFuture<void> EventBasedQDebugPrinter::print(const QString &message) {
+QFuture<void> EventBasedAsyncQDebugPrinter::print(const QString &message) {
     auto task = new PrinterTaskEvent{ message };
     auto future = task->promise().future();
     qApp->postEvent(this, task);
     return future;
 }
-void EventBasedQDebugPrinter::customEvent(QEvent *event) {
+void EventBasedAsyncQDebugPrinter::customEvent(QEvent *event) {
     if(auto message = dynamic_cast<PrinterTaskEvent*>(event); message) {
         qDebug() << message->message();
         message->promise().finish();

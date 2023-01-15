@@ -7,7 +7,7 @@
 #include <QEvent>
 
 
-class EventBasedQDebugPrinter : public QObject, public IPrinter {
+class EventBasedAsyncQDebugPrinter : public QObject, public IPrinter {
 private:
     Q_OBJECT
     class PrinterTaskEvent : public QEvent, public PrinterTask {
@@ -16,7 +16,7 @@ private:
         PrinterTaskEvent(const QString &message);
     };
 public:
-    explicit EventBasedQDebugPrinter(QObject *parent = nullptr);
+    explicit EventBasedAsyncQDebugPrinter(QObject *parent = nullptr);
     virtual QFuture<void> print(const QString& message) override;
 public:
     void setPriority(qint32 newPriority);
